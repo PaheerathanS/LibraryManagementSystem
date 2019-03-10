@@ -47,7 +47,7 @@
                     <td>Main Category</td>
                     <td>
                     <select name="mainClass">
-                    	<option>Select<option/>
+                    	<!--<option>Select<option/>-->
                     	<c:forEach items="${list}" var="mainClass">
                     		<option>${mainClass.getMainCategoryName()}</option>
                     	</c:forEach>

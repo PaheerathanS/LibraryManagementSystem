@@ -1,5 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+    
+
+	<%@page import="com.src.data.*,com.src.model.*,java.util.*,java.sql.*"%>  
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,6 +14,40 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <title>Add Book</title>
+
+<script type="text/javascript">  
+      var xmlHttp  
+      var xmlHttp
+      function showState(str){
+    	  //alert(str);
+	      if (typeof XMLHttpRequest != "undefined"){
+	      	xmlHttp= new XMLHttpRequest();
+	      }
+	      else if (window.ActiveXObject){
+	      	xmlHttp= new ActiveXObject("Microsoft.XMLHTTP");
+	      }
+	      if (xmlHttp==null){
+	      	alert("Browser does not support XMLHTTP Request")
+	      	return;
+	      } 
+	      
+	      var url ="combobox.jsp";
+	      url +="?count=" +str;
+	      
+	      xmlHttp.onreadystatechange = stateChange;
+	      xmlHttp.open("GET", url, true);
+	      stateChange();
+	      xmlHttp.send(null);
+      }
+
+      function stateChange(){   
+      	if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete"){   
+      		document.getElementById("subCategory").innerHTML=xmlHttp.responseText   
+      	}   
+      }
+</script>
+
+
 </head>
 <body>
 	<div class="navbar">
@@ -29,8 +68,6 @@
 	<h2 style="margin-left:20px">Add New Book </h2>
 	<br>
 	
-	<%@page import="com.src.data.*,com.src.model.*,java.util.*"%>  
-	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 	
 	<form action="BookController"  method="get" style="margin-left:20px">
             <table>
@@ -56,11 +93,37 @@
                 <tr>
                     <td>Main Category</td>
                     <td>
-                    <select>
-                    	<option>Select<option/>
-                    	<c:forEach items="${list}" var="mainClass">
+                    <select name="mainCategory" id="mainCategory" onchange="showState(this.value)">
+                    	<!--<c:forEach items="${list}" var="mainClass">
                     		<option>${mainClass.getMainCategoryName()}</option>
-                    	</c:forEach>
+                    	</c:forEach>-->
+                    	<% 
+							try { 
+								Class.forName("com.mysql.jdbc.Driver"); 
+							} catch (ClassNotFoundException e) { 
+								e.printStackTrace(); 
+								return; 
+							} 
+                    	
+							Connection connection = null; 
+							try { 
+								connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/library","root","root"); 
+							} 
+							catch (SQLException e) { 
+								e.printStackTrace(); 
+								return; 
+							} 
+							
+							PreparedStatement stmt=null; 
+							stmt=connection.prepareStatement("select * from main_category"); 
+							ResultSet rs=null; 
+							rs= stmt.executeQuery(); 
+							while(rs.next()){ 
+						%> 
+							<option value="<%=rs.getString("mainClass")%>"><%=rs.getString("mainClass")%></option> 
+						<% 
+							} 
+						%>
                     </select>
                     </td>
                 </tr>
@@ -68,7 +131,8 @@
                 <tr>
                     <td>Sub Category</td>
                     <td>
-                    <select>
+                
+                    <select name="subCategory" id="subCategory">
                     	
                     </select>
                     </td>

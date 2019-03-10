@@ -8,8 +8,8 @@
 <title>Edit Sub Category</title>
 </head>
 <body>
-	<%@page import="com.src.data.SubClassificationDao,com.src.model.SubClassification"%>  
-	
+	<%@page import="com.src.data.*,com.src.model.*,java.util.*"%>  
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 	<%  
 	String id=request.getParameter("id");  
 	SubClassification subClass=SubClassificationDao.getRecordById(id);  
@@ -43,9 +43,22 @@
                     <td>Category Name</td>
                     <td><input type="text" name="subClass" value="<%=subClass.getSubCategoryName() %>"/></td>
                 </tr>
+                <%  
+				List<MainClassification> list=MainClassificationDao.getAllRecords();  
+				request.setAttribute("list",list);  
+				%> 
                 <tr>
-                    <td>Main Category Id</td>
-                    <td><input type="text" name="mainClass" value="<%=subClass.getMainCategoryName() %>"/></td>
+                    <td>Main Category</td>
+                    <td>
+                    	<!-- <input type="text" name="mainClass" value="<%=subClass.getMainCategoryName() %>"/> -->
+                    	<select>
+                    		<option value="<%=subClass.getMainCategoryName() %>"> <%=subClass.getMainCategoryName()%></option>
+                    		<c:forEach items="${list}" var="mainClass">
+                    			<!-- <option value="<%=subClass.getMainCategoryName() %>"> <%=subClass.getMainCategoryName()%> </option> -->
+                    		<option>${mainClass.getMainCategoryName()}</option>
+                    		</c:forEach>
+                    	</select>
+                    </td>
                 </tr>
                 <tr><td colspan="2" ><input type="submit" value="Update" /></td></tr>
             </table>
